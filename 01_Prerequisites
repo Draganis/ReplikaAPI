@@ -1,0 +1,30 @@
+Before using the replika API there are some variables to fill.
+First we need the Unity Version. It can be found in the main.*.js script
+To find the exact name of the script look into your browsers Developertools and find the main page under the Network Tab. There just search for /static/js/main. in the sourcecode ooof the page. You could also regex the sourcecode with something like this:
+/static/js/main\.(.*?)\.js
+Next you have to analyze the code of the main-js-file. This is a bit tricky but not too hard.
+Search for the string ("unity_version")
+Not far above this is a variable that contains the unity version. The line looks like this:
+,o=280;
+or
+,i=280;
+
+Next variable we need is the capabilities-variable.
+You also find it in the main-js-file by searching for the first capability:
+["widget.multiselect",
+Then simply get everything between the [-brackets. Not the [-brackets themselves.
+
+If you are on the Networks-Tab of your Browser you can hijack the session variables of your existing websession pretty easily. That saves you the complete login process.
+For that simply go to the v17-file, head for the messages tab and search for a line starting with: {event_name: "init"
+Click that line and open that message. You will find a string like this:
+auth:
+{
+    "user_id": "61cecXXXXXXXXXXXXX82925XX",
+    "auth_token": "rPXXXxxXWXUuoXXXXYATNaVXibdxxx",
+    "device_id": "BF0695AA-XXXX-XXXX-XXXX-BE175B5CDD64"
+}
+
+The user_id is your accounts user ID
+The auth_token is assigned to your session at login
+The device_id is a randomly generated GUID at login.
+All three must be saved and transmitted on each request you do.
