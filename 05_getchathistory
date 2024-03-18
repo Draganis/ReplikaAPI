@@ -1,0 +1,65 @@
+This API call is special. For it needs a websocket connection
+URL: wss://ws.replika.ai/v17
+
+In PHP you can import the composer textalk\WebSocket Module 
+Make sure you begin your PHP file with:
+<?php
+namespace WebSocket;
+require __DIR__ . '/vendor/autoload.php';
+
+function GUID(){
+	return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+}
+
+$url = "wss://ws.replika.ai/v17";
+
+$chat_id = "{YOUR_CHAT_ID}";
+$token = GUID();
+$user_id = "{YOUR_USER_ID}";
+$auth_token = "{YOUR_AUTH_TOKEN}";
+$device_id = "{YOUR_DEVICE_ID}";
+$bot_id = "{YOUR_BOT_ID}";
+
+$options = [
+    'uri'           => $url,
+    'timeout'       => rand(1, 60),
+    'fragment_size' => rand(1, 4096) * 8,
+];
+$INIT = '{"event_name": "history","payload": {"chat_id": "'.$chat_id.'","limit": 1000},"token": "'.$token.'","auth": {"user_id": "'.$user_id.'","auth_token": "'.$auth_token.'","device_id": "'.$device_id.'"}}';
+$php_dict = json_decode($INIT,true);
+$raw_dict = $php_dict;
+$raw_dict['payload']['last_message_id'] = "";
+$init = $php_dict;
+while ($loop1) {
+    try {
+        $client = new Client($options['uri'], $options);
+        $info = json_encode([
+            'uri'           => $options['uri'],
+            'timeout'       => $options['timeout'],
+            'framgemt_size' => $client->getFragmentSize(),
+        ]);
+        //echo "> Creating client \n";
+		$client->text(json_encode($init));
+		flush();
+		//echo "> Reading content\n";
+		$received = $client->receive();
+		$rec = json_decode($received,true);
+		// Array of messages: $rec['payload']['messages']
+		// Array of reactions: $rec['payload']['message_reactions']
+
+		if(count($rec['payload']['messages'])>0){
+			$last_message_id = $rec['payload']['messages'][0]['id'];
+			$init = $raw_dict;
+			$init['payload']['last_message_id'] = $last_message_id;
+		}
+		else{
+			echo "<h2>Import is done. No more messages are waiting on the Replika server.</h2>\n";
+			$loop1 = false;
+		}
+		//exit();
+    } catch (\Throwable $e) {
+        echo "ERROR: {$e->getMessage()} [{$e->getCode()}]\n";
+    }
+    sleep(rand(1, 5));
+	//exit();
+}
