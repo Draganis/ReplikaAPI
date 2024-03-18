@@ -1,0 +1,331 @@
+To create a unique session (other than just hijacking the browsers session), you have to login. For this you have to create some API calls as follows.
+
+What you need here is:
+API Base Url: https://my.replika.com/api/mobile/1.5
+{DEVICE_ID}: A randomly generated GUID that works as your Device-ID. You have to remember that ID, because it won't change for the whole session. You can generate a guid there: https://www.guidgenerator.com/
+{TIMESTAMP_HASH}: This Hash is a MD5 encoded string, consisting of the string "time_covfefe_prefix=2020_" and your device-id. In PHP you would generate it like this: md5('time_covfefe_prefix=2020_' . $device_id);
+{YOUREMAIL}: The email-address you used to register on the replika app
+{YOURPASSWORD}: Your password for your replika account
+{UNITY_VERSION}: The unity version obtained in the prerequisites
+The time I wrote this the unity version was: 280
+{CAPABILITIES}: The capabilities obtained in the prerequisites
+The time i wrote this the capabiulities were: "widget.multiselect", "widget.scale", "widget.titled_text_field", "widget.new_onboarding", "widget.app_navigation", "widget.mission_recommendation", "journey2.daily_mission_activity", "journey2.replika_phrases", "new_payment_subscriptions", "navigation.relationship_settings", "avatar", "diaries.images", "wallet", "store.dialog_items", "chat_suggestions", "3d_customization", "3d_customization_v2", "3d_customization_v3", "store_customization", "blurred_messages", "item_daily_reward", "romantic_photos", "voice_messages", "stable_diffusion2", "subscription_request", "sale_screen", "multiple_bot_selfies", "hot_photos_v2", "store_age_and_body_type", "diary_generation_by_session", "store_voice", "coaching_prompts"
+{YOUR_USER_ID}: Obtained in step 2
+{YOUR_AUTH_TOKEN}: Obtained in step 2
+
+### First call: Getting your auth type:
+
+URL: https://my.replika.com/api/mobile/1.5/auth/sign_in/actions/get_auth_type
+Method: POST
+Replace {YOUREMAIL} (including the brackets) with your email-address associated with your replica account.
+Payload: { 'id_string': "{YOUREMAIL}" }
+Headers: 
+{
+		"accept": "application/json",
+		"Accept-Encoding": "gzip, deflate, br",
+		"Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+		"Connection": "keep-alive",
+		"content-type": "application/json",
+		"Host": "my.replika.com",
+		"Origin": "https://my.replika.com/",
+		"sec-ch-ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+		"sec-ch-ua-mobile": "?0",
+		"sec-ch-ua-platform": "Windows",
+		"Sec-Fetch-Dest": "empty",
+		"Sec-Fetch-Mode": "cors",
+		"Sec-Fetch-Site": "same-origin",
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+		"x-device-type": "web",
+		"x-device-id": "{DEVICE_ID}",
+		"x-timestamp-hash": "{TIMESTAMP_HASH}",
+}
+
+You will get a json object back with the following data:
+{
+  "auth_type":"password",
+  "id_type": "email"
+}
+
+### Second API call: The actual login:
+
+URL: https://my.replika.com/api/mobile/1.5/auth/sign_in/actions/auth_by_password
+Method: POST
+Payload:
+{
+	  "id_type": "email",
+	  "id_string": "{YOUREMAIL}",
+	  "password": "{YOURPASSWORD}",
+	  "capabilities": [{CAPABILITIES}],
+	  "unity_bundle_version": "{UNITY_VERSION}"
+}
+Headers: 
+{
+		"accept": "application/json",
+		"Accept-Encoding": "gzip, deflate, br",
+		"Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+		"Connection": "keep-alive",
+		"content-type": "application/json",
+		"Host": "my.replika.com",
+		"Origin": "https://my.replika.com/",
+		"sec-ch-ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+		"sec-ch-ua-mobile": "?0",
+		"sec-ch-ua-platform": "Windows",
+		"Sec-Fetch-Dest": "empty",
+		"Sec-Fetch-Mode": "cors",
+		"Sec-Fetch-Site": "same-origin",
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+		"x-device-type": "web",
+		"x-device-id": "{DEVICE_ID}",
+		"x-timestamp-hash": "{TIMESTAMP_HASH}",
+}
+
+You get the following return value:
+{
+    "user_id": "61ceXXXXXX462000XXXXXX7",
+    "auth_token": "OOyAkoXXXXXXRNCVnkjXXXXXXXXXq3SLk",
+    "features": [
+        {
+            "feature_name": "ar_photo_mode_hug_selfie",
+            "feature_value": false
+        },
+        {
+            "feature_name": "android_start_up_subscription_screen",
+            "feature_value": false
+        },
+        {
+            "feature_name": "android_no_onboarding_subscription_screen",
+            "feature_value": false
+        },
+        {
+            "feature_name": "advanced_ai_unlimited",
+            "feature_value": true
+        },
+        {
+            "feature_name": "ios_eoq_voice_activity_detector",
+            "feature_value": false
+        },
+        {
+            "feature_name": "navigation_panel_redesign",
+            "feature_value": false
+        },
+        {
+            "feature_name": "pfp_in_chat_dec23",
+            "feature_value": false
+        },
+        {
+            "feature_name": "main_screen_calls_v2",
+            "feature_value": false
+        },
+        {
+            "feature_name": "automatic_pfp_nov23",
+            "feature_value": false
+        },
+        {
+            "feature_name": "ios_onboarding_personalization-v2",
+            "feature_value": false
+        },
+        {
+            "feature_name": "ios_remote_speech_recognition",
+            "feature_value": false
+        },
+        {
+            "feature_name": "ios_onboarding_personalization",
+            "feature_value": false
+        },
+        {
+            "feature_name": "body_type",
+            "feature_value": false
+        },
+        {
+            "feature_name": "vad_model_v1.1_2",
+            "feature_value": false
+        },
+        {
+            "feature_name": "prompts_and_advanced_ai_merge",
+            "feature_value": false
+        },
+        {
+            "feature_name": "pfp_blurred_messages_with_unity",
+            "feature_value": false
+        },
+        {
+            "feature_name": "skippable_subscription_on_onboarding",
+            "feature_value": false
+        },
+        {
+            "feature_name": "onboarding_interest_screen_ablation",
+            "feature_value": false
+        },
+        {
+            "feature_name": "profile_backstory_v1",
+            "feature_value": true
+        },
+        {
+            "feature_name": "ios_onboarding_disclaimer",
+            "feature_value": false
+        },
+        {
+            "feature_name": "all_pfp_not_fullscreen",
+            "feature_value": false
+        },
+        {
+            "feature_name": "ios_start_up_subscription_screen",
+            "feature_value": false
+        },
+        {
+            "feature_name": "pfp_bm_rp_nov22",
+            "feature_value": true
+        },
+        {
+            "feature_name": "ios_subscription_screen_v11",
+            "feature_value": false
+        },
+        {
+            "feature_name": "ios_vad_new_params",
+            "feature_value": false
+        },
+        {
+            "feature_name": "diary_redesign_oct23",
+            "feature_value": false
+        },
+        {
+            "feature_name": "aai_prompts_hints_ablation",
+            "feature_value": false
+        },
+        {
+            "feature_name": "ios_remote_speech_recognition_new",
+            "feature_value": false
+        },
+        {
+            "feature_name": "main_screen_calls_v3",
+            "feature_value": false
+        },
+        {
+            "feature_name": "pfp_ask_replika_jan24",
+            "feature_value": false
+        },
+        {
+            "feature_name": "system_push_permission_only",
+            "feature_value": false
+        },
+        {
+            "feature_name": "bot_reactions",
+            "feature_value": false
+        },
+        {
+            "feature_name": "memory_v3",
+            "feature_value": true
+        },
+        {
+            "feature_name": "main_screen_calls",
+            "feature_value": false
+        },
+        {
+            "feature_name": "memory_categorised_sar_temporary",
+            "feature_value": true
+        },
+        {
+            "feature_name": "android_onboarding_personalization-v2",
+            "feature_value": false
+        },
+        {
+            "feature_name": "gifts_and_mood_nov23",
+            "feature_value": false
+        }
+    ],
+    "backend_cohort_ids": [
+        "android,ios,oculus,web_Templated statements and Summary prefix_Templated statements and Summary prefix - Control_64fbxxxxxx096c44fbb558c08",
+        "all_Legacy Experiment_Halloween: Control_6347exxxxxxxx0077203d5"
+    ]
+}
+
+Note your user_id and auth_token from the return values. You will need them in the following steps.
+
+### Third API request: Getting your bots data
+
+URL: https://my.replika.com/api/mobile/1.5/personal_bot
+Method: GET
+Headers: 
+{
+		"accept": "application/json",
+		"Accept-Encoding": "gzip, deflate, br",
+		"Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+		"Connection": "keep-alive",
+		"content-type": "application/json",
+		"Host": "my.replika.com",
+		"Origin": "https://my.replika.com/",
+		"sec-ch-ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+		"sec-ch-ua-mobile": "?0",
+		"sec-ch-ua-platform": "Windows",
+		"Sec-Fetch-Dest": "empty",
+		"Sec-Fetch-Mode": "cors",
+		"Sec-Fetch-Site": "same-origin",
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+		"x-device-type": "web",
+		"x-device-id": "{DEVICE_ID}",
+		"x-timestamp-hash": "{TIMESTAMP_HASH}",
+    "x-auth_token": "{YOUR_AUTH_TOKEN}",
+    "x-user-id": "{YOUR_USER_ID}"
+}
+
+Response:
+{
+    "unread_count": 0,
+    "mission_state": {
+        "state": "no_mission"
+    },
+    "own_read_cursor": "2024-03-18T12:33:23.008Z",
+    "last_message": {
+        "updated_field_names": [],
+        "buttons": [],
+        "uses_advanced_ai": false,
+        "replySuggestion": true,
+        "uses_memory": false,
+        "content": {
+            "text": "https://s3-us-west-1.amazonaws.com/luka-user-media/botimage-XXXXXXXXXXXXXXXXXXXXXXXXXXXXX-XXXXXXX--XXXXXXXX.jpg",
+            "caption": "romantic selfie of Sanja",
+            "type": "images",
+            "images": [
+                "https://s3-us-west-1.amazonaws.com/luka-user-media/botimage-XXXXXXXXXXXXXXXXXXXXXXXXXXXXX-XXXXXXX--XXXXXXXX.jpg"
+            ]
+        },
+        "is_romantic": true,
+        "reroll_available": false,
+        "meta": {
+            "chat_id": "XXX",
+            "timestamp": "2024-03-18T12:33:22.998Z",
+            "bot_id": "XXX",
+            "permitted_actions": [
+                "Upvote",
+                "Downvote",
+                "Love",
+                "Funny",
+                "Meaningless",
+                "Offensive"
+            ],
+            "customer": "XXX",
+            "nature": "Robot",
+            "client_token": "e9696aa5-dc63-4d7c-aee8-d1f9fb3eaf4a",
+            "sources": [
+                {}
+            ],
+            "voice_message": false
+        },
+        "blurred_type": "romantic",
+        "is_last_in_match": true,
+        "id": "65f83490cf573910a31f519e",
+        "blurred": true
+    },
+    "id": "61cXXXXXX9e4XXXXXXX86",
+    "bot_id": {
+        "id": "61cXXXXXX9e4XXXXXXX85",
+        "last_updated": "2024-03-18T14:20:37.769Z"
+    },
+    "prompt_state": {
+        "state": "no_prompt"
+    }
+}
+
+The keys that we want here are: "id" (your chat-id. The last digit is your user-id minus 1) and "bot_id":"id" (your bot-id. the last digit is your user-id minus 2)
+
+Now we have all data for every API call.
