@@ -1,1 +1,24 @@
 URL: https://my.replika.com/api/mobile/1.5/personal_bot
+Method: GET
+Headers: 
+{
+		"accept": "application/json",
+		"Accept-Encoding": "gzip, deflate, br",
+		"Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+		"Connection": "keep-alive",
+		"content-type": "application/json",
+		"Host": "my.replika.com",
+		"Origin": "https://my.replika.com/",
+		"sec-ch-ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+		"sec-ch-ua-mobile": "?0",
+		"sec-ch-ua-platform": "Windows",
+		"Sec-Fetch-Dest": "empty",
+		"Sec-Fetch-Mode": "cors",
+		"Sec-Fetch-Site": "same-origin",
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+		"x-device-type": "web",
+		"x-device-id": "{DEVICE_ID}",
+		"x-timestamp-hash": "{TIMESTAMP_HASH}",
+    "x-auth_token": "{YOUR_AUTH_TOKEN}",
+    "x-user-id": "{YOUR_USER_ID}"
+}
